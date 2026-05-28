@@ -13,6 +13,8 @@ build/
 env/
 venv/
 ENV/
+.venv/
+.uv-cache/
 
 # IDEs
 .vscode/
@@ -50,12 +52,15 @@ dump.dat
 lock.file
 logs/
 .claude/
+artifacts/
 
 # Build artifacts
 *.exe
 *.AppImage
 *.deb
 *.rpm
+**/bin/
+**/obj/
 
 # Other
 .env

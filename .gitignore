@@ -10,6 +10,8 @@ __pycache__
 /Twitch Drops Miner
 # Dev files
 /env
+/.venv
+/.uv-cache
 /cache
 /*.jar
 log.txt
@@ -21,6 +23,7 @@ logs/
 .claude/
 data/
 .ruff_cache/
+.pytest_cache/
 .vscode/
 .idea/
 *.iml
@@ -29,3 +32,7 @@ data/
 .coverage
 
 artifacts/
+
+# .NET build outputs
+**/bin/
+**/obj/

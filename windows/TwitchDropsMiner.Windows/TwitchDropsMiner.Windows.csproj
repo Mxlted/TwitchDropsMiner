@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <ApplicationIcon>..\..\icons\pickaxe.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TwitchDropsMiner.Windows.Core\TwitchDropsMiner.Windows.Core.csproj" />
+    <Resource Include="..\..\icons\pickaxe.ico" Link="pickaxe.ico" />
+  </ItemGroup>
+</Project>

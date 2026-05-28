@@ -70,6 +70,12 @@ lang/                # Translation JSON files (19 languages)
 ├── Français.json
 ├── Deutsch.json
 └── ...              # 15 more languages
+
+windows/            # Windows WPF launcher, .NET launcher core, and launcher tests
+Start-Windows.ps1   # Root wrapper to run the Windows launcher from source
+Build-Windows.ps1   # Root wrapper for the one-folder Windows package build
+Test-Windows.ps1    # Root wrapper for Windows launcher tests
+FORK_SETUP.md       # Instructions for attaching this standalone folder to a GitHub fork
 ```
 
 ### Core Components
@@ -135,6 +141,14 @@ lang/                # Translation JSON files (19 languages)
 - Socket.IO server for real-time bi-directional communication
 - Serves static web frontend from `web/` directory
 - Integrates with WebGUIManager via `set_managers()`
+
+**windows/TwitchDropsMiner.Windows** - Windows local launcher:
+
+- WPF desktop shell for starting and stopping the existing local web server
+- Opens the web UI at `http://127.0.0.1:8080` in the default browser
+- Shows process output, server status, and login status
+- Uses the testable `TwitchDropsMiner.Windows.Core` launcher library
+- Packaged with `windows/build-windows.ps1` into `artifacts/windows/TwitchDropsMiner`
 
 **src/websocket/pool.py** - WebSocket management:
 
@@ -275,6 +289,10 @@ login_text = _.t["login"]["status"]["logged_in"]  # Returns "Logged in"
 - **src/web/app.py** - FastAPI application with REST API and Socket.IO
 - **src/web/managers/cache.py** - ImageCache for campaign artwork caching
 - **web/** - Frontend assets (index.html, static/app.js, static/styles.css)
+- **windows/TwitchDropsMiner.Windows/** - WPF launcher app for Windows
+- **windows/TwitchDropsMiner.Windows.Core/** - Testable .NET launcher core (repository/Python detection, process runner, status client)
+- **windows/TwitchDropsMiner.Windows.Tests/** - Dependency-free launcher test harness
+- **windows/build-windows.ps1** - Builds a one-folder Windows package under `artifacts/windows/TwitchDropsMiner`
 
 ## Development Commands
 
@@ -319,6 +337,41 @@ docker-compose up -d
 # Access at http://localhost:8080
 ```
 
+Windows local app:
+
+```powershell
+# Build the WPF launcher
+dotnet build windows\TwitchDropsMiner.Windows\TwitchDropsMiner.Windows.csproj
+
+# Run the WPF launcher
+dotnet run --project windows\TwitchDropsMiner.Windows\TwitchDropsMiner.Windows.csproj
+
+# Run launcher tests
+dotnet run --project windows\TwitchDropsMiner.Windows.Tests\TwitchDropsMiner.Windows.Tests.csproj
+
+# Create the one-folder Windows build
+.\windows\build-windows.ps1
+```
+
+The Windows launcher detects Python in this order: `env\Scripts\python.exe`, `.venv\Scripts\python.exe`, `uv`, `py -3.12`, then `python`. Set `TDM_PYTHON` to force a specific executable.
+It targets .NET 8 for broad Windows desktop compatibility.
+The Windows build script writes the packaged app to `artifacts\windows\TwitchDropsMiner`; pass `-SelfContained` to include the .NET runtime.
+
+Windows-first standalone wrappers:
+
+```powershell
+# Run the Windows launcher from source
+.\Start-Windows.ps1
+
+# Create the one-folder Windows build
+.\Build-Windows.ps1
+
+# Run launcher tests
+.\Test-Windows.ps1
+```
+
+Use `FORK_SETUP.md` to initialize this folder as its own Git working tree for a fork of `rangermix/TwitchDropsMiner`.
+
 ## Testing
 
 ### Automated Tests
@@ -328,6 +381,9 @@ The project includes a test suite in the `tests/` directory:
 ```bash
 # Activate virtual environment and run tests
 source env/bin/activate && python -m pytest tests/
+
+# Run Windows launcher tests
+dotnet run --project windows\TwitchDropsMiner.Windows.Tests\TwitchDropsMiner.Windows.Tests.csproj
 ```
 
 **Test Files:**
@@ -424,10 +480,11 @@ The application uses a web-based interface accessible via browser:
 - ✅ Docker deployment - containerized for any platform
 - ✅ Remote access - access from any device on network
 - ✅ Headless operation - no display server required
+- ✅ Windows local launcher - WPF shell that runs the existing web UI locally
 
 **NOT supported:**
 
 - Multi-account support
 - Channel points mining
 - Mining for unlinked campaigns
-- Desktop GUI
+- Full native desktop mining UI (the Windows launcher wraps the local web UI)

@@ -1,0 +1,235 @@
+<Window x:Class="TwitchDropsMiner.Windows.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Twitch Drops Miner"
+        Width="980"
+        Height="650"
+        MinWidth="820"
+        MinHeight="560"
+        Background="{StaticResource WindowBackgroundBrush}"
+        Icon="pickaxe.ico"
+        Closing="Window_Closing">
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="20" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <DockPanel Grid.Row="0" LastChildFill="False">
+            <StackPanel DockPanel.Dock="Left">
+                <TextBlock Text="Twitch Drops Miner"
+                           FontSize="26"
+                           FontWeight="SemiBold" />
+                <TextBlock Text="Windows launcher"
+                           Foreground="{StaticResource MutedTextBrush}"
+                           Margin="0,4,0,0" />
+            </StackPanel>
+
+            <Border x:Name="StatusPillBorder"
+                    DockPanel.Dock="Right"
+                    Background="{StaticResource SurfaceAltBrush}"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="18"
+                    Padding="14,7"
+                    VerticalAlignment="Center">
+                <StackPanel Orientation="Horizontal">
+                    <Ellipse x:Name="StatusDotEllipse"
+                             Width="8"
+                             Height="8"
+                             Fill="{StaticResource MutedTextBrush}"
+                             VerticalAlignment="Center"
+                             Margin="0,0,8,0" />
+                    <TextBlock x:Name="StatusPillTextBlock"
+                               Text="Stopped"
+                               FontWeight="SemiBold" />
+                </StackPanel>
+            </Border>
+        </DockPanel>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="340" />
+                <ColumnDefinition Width="20" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0"
+                    Background="{StaticResource SurfaceBrush}"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="20">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="18" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="18" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="18" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0"
+                               Text="Control"
+                               FontSize="16"
+                               FontWeight="SemiBold" />
+
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="10" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="40" />
+                            <RowDefinition Height="10" />
+                            <RowDefinition Height="40" />
+                        </Grid.RowDefinitions>
+
+                        <Button x:Name="StartButton"
+                                Grid.Column="0"
+                                Content="Start"
+                                Style="{StaticResource PrimaryButton}"
+                                Margin="0"
+                                Click="StartButton_Click" />
+                        <Button x:Name="OpenButton"
+                                Grid.Column="2"
+                                Content="Open"
+                                Margin="0"
+                                Click="OpenButton_Click" />
+
+                        <Button x:Name="StopButton"
+                                Grid.Row="2"
+                                Grid.Column="0"
+                                Content="Stop"
+                                Margin="0"
+                                Click="StopButton_Click" />
+                        <Button x:Name="RestartButton"
+                                Grid.Row="2"
+                                Grid.Column="2"
+                                Content="Restart"
+                                Margin="0"
+                                Click="RestartButton_Click" />
+                    </Grid>
+
+                    <StackPanel Grid.Row="4">
+                        <TextBlock Text="Status"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,12" />
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="76" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="28" />
+                                <RowDefinition Height="28" />
+                                <RowDefinition Height="28" />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Text="Process"
+                                       Foreground="{StaticResource MutedTextBrush}" />
+                            <TextBlock x:Name="ProcessStatusTextBlock"
+                                       Grid.Column="1"
+                                       Text="Stopped" />
+
+                            <TextBlock Grid.Row="1"
+                                       Text="Server"
+                                       Foreground="{StaticResource MutedTextBrush}" />
+                            <TextBlock x:Name="ServerStatusTextBlock"
+                                       Grid.Row="1"
+                                       Grid.Column="1"
+                                       Text="Offline" />
+
+                            <TextBlock Grid.Row="2"
+                                       Text="Login"
+                                       Foreground="{StaticResource MutedTextBrush}" />
+                            <TextBlock x:Name="LoginStatusTextBlock"
+                                       Grid.Row="2"
+                                       Grid.Column="1"
+                                       Text="Unknown"
+                                       TextTrimming="CharacterEllipsis" />
+                        </Grid>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="6">
+                        <TextBlock Text="Location"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,12" />
+
+                        <TextBlock Text="Repository"
+                                   Foreground="{StaticResource MutedTextBrush}"
+                                   Margin="0,0,0,4" />
+                        <TextBlock x:Name="RepositoryPathTextBox"
+                                   TextWrapping="Wrap"
+                                   FontFamily="Consolas"
+                                   FontSize="12"
+                                   Foreground="{StaticResource TextBrush}" />
+
+                        <TextBlock Text="Web UI"
+                                   Foreground="{StaticResource MutedTextBrush}"
+                                   Margin="0,14,0,4" />
+                        <TextBlock x:Name="ServerUrlTextBox"
+                                   FontFamily="Consolas"
+                                   FontSize="12"
+                                   Foreground="{StaticResource TextBrush}" />
+
+                        <TextBlock Text="Command"
+                                   Foreground="{StaticResource MutedTextBrush}"
+                                   Margin="0,14,0,4" />
+                        <TextBlock x:Name="PythonCommandTextBlock"
+                                   Text="Not started"
+                                   TextWrapping="Wrap"
+                                   FontFamily="Consolas"
+                                   FontSize="12"
+                                   Foreground="{StaticResource MutedTextBrush}" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <Border Grid.Column="2"
+                    Background="{StaticResource SurfaceBrush}"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="18">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="12" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <DockPanel Grid.Row="0">
+                        <TextBlock Text="Process Log"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   DockPanel.Dock="Left" />
+                        <Button Content="Clear"
+                                DockPanel.Dock="Right"
+                                MinHeight="30"
+                                Padding="12,4"
+                                Click="ClearLogButton_Click" />
+                    </DockPanel>
+
+                    <TextBox x:Name="LogTextBox"
+                             Grid.Row="2"
+                             IsReadOnly="True"
+                             AcceptsReturn="True"
+                             TextWrapping="Wrap"
+                             VerticalScrollBarVisibility="Auto"
+                             HorizontalScrollBarVisibility="Disabled"
+                             FontFamily="Consolas"
+                             FontSize="12" />
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>
