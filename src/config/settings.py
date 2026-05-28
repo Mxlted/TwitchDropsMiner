@@ -65,10 +65,10 @@ class Settings:
         self.load()
 
     def load(self):
-        # TODO: remvoe customized serde in the future
+        # TODO: remove customized serde in the future
         settings = json_load(SETTINGS_PATH, default_settings, merge=True)
         for key, value in settings.items():
-            if value is URL:
+            if isinstance(value, URL):
                 setattr(self, key, str(value))
             else:
                 setattr(self, key, value)

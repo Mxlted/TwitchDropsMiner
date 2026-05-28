@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import re
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -46,6 +47,23 @@ socket_app = socketio.ASGIApp(sio, app)
 gui_manager: WebGUIManager | None = None
 twitch_client: Twitch | None = None
 _server_instance: uvicorn.Server | None = None
+
+
+def _version_parts(version: str) -> tuple[int, ...]:
+    """Extract comparable numeric release parts from a version string."""
+    release = version.strip().lstrip("vV").split("+", 1)[0].split("-", 1)[0]
+    parts: list[int] = []
+    for part in release.split("."):
+        match = re.match(r"\d+", part)
+        parts.append(int(match.group(0)) if match else 0)
+    while parts and parts[-1] == 0:
+        parts.pop()
+    return tuple(parts)
+
+
+def _is_newer_version(current_version: str, latest_version: str) -> bool:
+    """Return True when latest_version is newer than current_version."""
+    return _version_parts(latest_version) > _version_parts(current_version)
 
 
 def set_managers(gui: WebGUIManager, twitch: Twitch):
@@ -204,7 +222,7 @@ async def update_settings(settings: SettingsUpdate):
     if not gui_manager:
         raise HTTPException(status_code=503, detail="GUI not initialized")
 
-    settings_dict = settings.dict(exclude_unset=True)
+    settings_dict = settings.model_dump(exclude_unset=True)
     gui_manager.settings.update_settings(settings_dict)
     return {"success": True, "settings": gui_manager.settings.get_settings()}
 
@@ -225,7 +243,11 @@ async def verify_proxy(request: ProxyVerifyRequest):
         # Test connection to Twitch
         async with (
             aiohttp.ClientSession() as session,
-            session.get("https://www.twitch.tv", proxy=proxy_url, timeout=10) as response,
+            session.get(
+                "https://www.twitch.tv",
+                proxy=proxy_url,
+                timeout=aiohttp.ClientTimeout(total=10),
+            ) as response,
         ):
             # Just checking if we can connect and get a response
             if response.status < 500:
@@ -261,7 +283,8 @@ async def get_version():
         async with (
             aiohttp.ClientSession() as session,
             session.get(
-                "https://api.github.com/repos/rangermix/TwitchDropsMiner/releases/latest", timeout=5
+                "https://api.github.com/repos/rangermix/TwitchDropsMiner/releases/latest",
+                timeout=aiohttp.ClientTimeout(total=5),
             ) as response,
         ):
             if response.status == 200:
@@ -269,8 +292,7 @@ async def get_version():
                 latest_version = data.get("tag_name", "").lstrip("v")
                 download_url = data.get("html_url")
 
-                # Compare versions (simple string comparison works for semantic versioning)
-                if latest_version and latest_version > current_version:
+                if latest_version and _is_newer_version(current_version, latest_version):
                     update_available = True
     except Exception as e:
         logger.warning(f"Failed to check for updates: {str(e)}")

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 from collections.abc import Callable, Mapping
+from copy import deepcopy
 from datetime import datetime, timezone
 from enum import Enum
 from pathlib import Path
@@ -116,16 +117,19 @@ def merge_json(obj: JsonType, template: Mapping[Any, Any]) -> None:
         if k not in template:
             # unknown key: overwrite from template
             del obj[k]
+        elif isinstance(v, URL) and isinstance(template[k], str):
+            # Preserve old serialized URL values for settings that are now plain strings.
+            obj[k] = str(v)
         elif type(v) is not type(template[k]):
             # types don't match: overwrite from template
-            obj[k] = template[k]
+            obj[k] = deepcopy(template[k])
         elif isinstance(v, dict):
             assert isinstance(template[k], dict)
             merge_json(v, template[k])
     # ensure the object is not missing any keys
     for k in template:
         if k not in obj:
-            obj[k] = template[k]
+            obj[k] = deepcopy(template[k])
 
 
 def json_load(path: Path, defaults: _JSON_T, *, merge: bool = True) -> _JSON_T:
@@ -140,7 +144,7 @@ def json_load(path: Path, defaults: _JSON_T, *, merge: bool = True) -> _JSON_T:
     Returns:
         Loaded and optionally merged JSON data
     """
-    defaults_dict: JsonType = dict(defaults)
+    defaults_dict: JsonType = deepcopy(dict(defaults))
     if path.exists():
         with open(path, encoding="utf8") as file:
             combined: JsonType = _remove_missing(json.load(file, object_hook=_deserialize))

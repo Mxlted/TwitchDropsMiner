@@ -1,4 +1,5 @@
 import unittest
+from typing import cast
 from unittest.mock import MagicMock
 
 from src.models.campaign import DropsCampaign
@@ -91,7 +92,7 @@ class TestWantedGamesFilter(unittest.TestCase):
             DropsCampaign.has_wanted_unclaimed_benefits.__get__(c5, DropsCampaign)
         )
 
-        inventory = [c1, c2, c3, c4, c5]
+        inventory = cast(list[DropsCampaign], [c1, c2, c3, c4, c5])
         stream_selector = StreamSelector()
         wanted_games = stream_selector.get_wanted_games(self.settings, inventory)
 

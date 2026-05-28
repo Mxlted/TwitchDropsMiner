@@ -69,6 +69,13 @@ uv sync
 uv run python -m pytest tests/
 ```
 
+Static quality checks:
+
+```powershell
+uv run --extra dev python -m ruff check .
+uv run --extra dev python -m mypy src tests
+```
+
 ## Backend-Only Use
 
 The backend can run without the Windows shell:

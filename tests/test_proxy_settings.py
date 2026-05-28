@@ -17,8 +17,14 @@ class TestProxySettings(unittest.TestCase):
         self.mock_settings = MagicMock(spec=Settings)
         self.mock_console = MagicMock(spec=ConsoleOutputManager)
 
-        # Mock asyncio.create_task
-        self.create_task_patcher = unittest.mock.patch("asyncio.create_task")
+        # Mock asyncio.create_task and close the coroutine it receives to avoid warnings.
+        def close_scheduled_coroutine(coro):
+            coro.close()
+            return MagicMock()
+
+        self.create_task_patcher = unittest.mock.patch(
+            "asyncio.create_task", side_effect=close_scheduled_coroutine
+        )
         self.mock_create_task = self.create_task_patcher.start()
 
     def tearDown(self):

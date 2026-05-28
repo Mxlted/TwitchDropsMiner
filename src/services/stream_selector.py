@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from datetime import datetime, timedelta, timezone
 
 from src.config.settings import Settings
@@ -7,7 +8,7 @@ from src.models.game import Game
 
 class StreamSelector:
     def _get_wanted_game_tree(
-        self, settings: Settings, campaigns: list[DropsCampaign]
+        self, settings: Settings, campaigns: Sequence[DropsCampaign]
     ) -> list[dict]:
         """
         Get the hierarchical tree of wanted items (Games -> Campaigns -> Drops -> Benefits).
@@ -68,11 +69,11 @@ class StreamSelector:
         return wanted_games
 
     def get_wanted_game_tree(
-        self, settings: Settings, campaigns: list[DropsCampaign]
+        self, settings: Settings, campaigns: Sequence[DropsCampaign]
     ) -> list[dict]:
         return [
             {**game, "game_obj": None} for game in self._get_wanted_game_tree(settings, campaigns)
         ]
 
-    def get_wanted_games(self, settings: Settings, campaigns: list[DropsCampaign]) -> list[Game]:
+    def get_wanted_games(self, settings: Settings, campaigns: Sequence[DropsCampaign]) -> list[Game]:
         return [game["game_obj"] for game in self._get_wanted_game_tree(settings, campaigns)]

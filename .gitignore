@@ -1,9 +1,13 @@
 # Cache files
 __pycache__
 .mypy_cache
+.pytest_cache/
+.ruff_cache/
 # Build and dist files
 /build
 /dist
+htmlcov/
+coverage.xml
 /*.exe
 /*.zip
 /*.tmp
@@ -13,6 +17,8 @@ __pycache__
 /.venv
 /.uv-cache
 /cache
+.env
+.env.*
 /*.jar
 log.txt
 /dump.dat
@@ -22,14 +28,16 @@ settings.json
 logs/
 .claude/
 data/
-.ruff_cache/
-.pytest_cache/
 .vscode/
 .idea/
+.vs/
 *.iml
 *.log
 *.egg-info/
 .coverage
+.coverage.*
+*.suo
+*.user
 
 artifacts/
 

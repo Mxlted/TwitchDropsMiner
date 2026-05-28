@@ -384,6 +384,10 @@ source env/bin/activate && python -m pytest tests/
 
 # Run Windows launcher tests
 dotnet run --project windows\TwitchDropsMiner.Windows.Tests\TwitchDropsMiner.Windows.Tests.csproj
+
+# Static quality checks
+uv run --extra dev python -m ruff check .
+uv run --extra dev python -m mypy src tests
 ```
 
 **Test Files:**
