@@ -16,21 +16,21 @@ param(
 $ErrorActionPreference = "Stop"
 $repoRoot = Split-Path -Parent $PSCommandPath
 $buildScript = Join-Path $repoRoot "windows\build-windows.ps1"
-$buildArgs = @(
-    "-Configuration", $Configuration,
-    "-Runtime", $Runtime
-)
+$buildParams = @{
+    Configuration = $Configuration
+    Runtime = $Runtime
+}
 
 if (-not [string]::IsNullOrWhiteSpace($OutputDir)) {
-    $buildArgs += @("-OutputDir", $OutputDir)
+    $buildParams.OutputDir = $OutputDir
 }
 
 if ($SelfContained) {
-    $buildArgs += "-SelfContained"
+    $buildParams.SelfContained = $true
 }
 
 if ($NoClean) {
-    $buildArgs += "-NoClean"
+    $buildParams.NoClean = $true
 }
 
-& $buildScript @buildArgs
+& $buildScript @buildParams
